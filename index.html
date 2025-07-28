@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مطعم ميراتا</title>
+    <!-- Link to Font Awesome for stars -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Link to Google Fonts (Cairo and Tajawal) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- QR Code Generator Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="main-header">
+        <div class="logo-container">
+            <img src="images/logo.png" alt="Logo" class="logo">
+            <span class="restaurant-name">مطعم ميراتا</span>
+        </div>
+        <div class="header-right-section">
+            <div class="language-switcher">
+                <button class="language-btn active" data-lang="ar">العربية</button>
+                <button class="language-btn" data-lang="en">English</button>
+            </div>
+            <div class="cart-icon-container">
+                <i class="fas fa-shopping-cart" id="cart-icon"></i>
+                <span class="cart-counter" id="cart-counter">0</span>
+            </div>
+            <div class="menu-actions">
+                <button id="qr-menu-btn" class="qr-menu-btn" title="QR Menu"><i class="fas fa-qrcode"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Controls Section -->
+    <section id="controls-section">
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="ابحث عن طبق...">
+            <i class="fas fa-search search-icon"></i>
+        </div>
+        <div class="filter-container">
+            <select id="category-filter" class="filter-dropdown">
+                <option value="all">الكل</option>
+                <!-- Options will be populated by JavaScript -->
+            </select>
+        </div>
+    </section>
+
+    <!-- Menu Section -->
+    <main id="menu-container">
+        <!-- Menu items will be loaded here by JavaScript -->
+    </main>
+
+    <!-- Cart Sidebar -->
+    <aside class="cart-sidebar" id="cart-sidebar">
+        <div class="cart-header">
+            <h3>سلة الطلبات</h3>
+            <button class="close-btn" id="close-cart-btn">&times;</button>
+        </div>
+        <div class="cart-items" id="cart-items">
+            <!-- Cart items will be loaded here -->
+            <p class="empty-cart-message">سلتك فارغة.</p>
+        </div>
+        <div class="cart-footer">
+            <div class="order-type-selection">
+                <h4>اختر نوع الطلب:</h4>
+                <label class="radio-label">
+                    <input type="radio" name="orderType" id="orderTypeTable" value="table" checked>
+                    <span>على الطاولة</span>
+                </label>
+                <label class="radio-label">
+                    <input type="radio" name="orderType" id="orderTypePickup" value="pickup">
+                    <span>استلام من الفرع</span>
+                </label>
+            </div>
+            <div class="total">
+                <span>الإجمالي:</span>
+                <span id="cart-total">0.00 ريال</span>
+            </div>
+            <button class="checkout-btn" id="checkout-btn">إتمام الطلب عبر واتساب</button>
+            <button class="clear-cart-btn" id="clear-cart-btn">حذف الكل</button>
+        </div>
+    </aside>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- QR Menu Modal -->
+    <div class="modal" id="qr-menu-modal">
+        <div class="modal-content qr-modal-content">
+            <span class="close-modal-btn" id="close-qr-modal-btn">&times;</span>
+            <h2>مسح القائمة</h2>
+            <div id="qrcode-container"></div>
+            <p class="qr-instructions">امسح الرمز لطلب أو استعراض قائمة مطعم ميراتا.</p>
+            <p class="qr-link-info"></p>
+        </div>
+    </div>
+
+    <!-- Product Modal -->
+    <div class="modal" id="product-modal">
+        <div class="modal-content">
+            <span class="close-modal-btn" id="close-modal-btn">&times;</span>
+            <img id="modal-img" src="" alt="" loading="lazy">
+            <h2 id="modal-name"></h2>
+            <div class="modal-rating" id="modal-rating"></div>
+            <span id="modal-rating-count"></span>
+            <p class="price" id="modal-price"></p>
+            <p class="modal-desc" id="modal-desc"></p>
+
+            <!-- مكان خيارات التخصيص -->
+            <div id="customization-area">
+                <!-- يتم توليد الخيارات هنا بواسطة JavaScript -->
+            </div>
+
+            <div class="modal-notes">
+                <h4>ملاحظات خاصة بالطلب:</h4>
+                <textarea id="modal-notes-input" placeholder="مثال: بدون بصل، زيادة شطة..."></textarea>
+            </div>
+            <button id="modal-add-to-cart-btn" class="add-to-cart-modal-btn">إضافة إلى السلة</button>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+    <!-- Hidden audio elements for sound notifications -->
+    <audio id="add-to-cart-sound" preload="auto">
+        <source src="sounds/add_to_cart.mp3" type="audio/mpeg">
+        <source src="sounds/add_to_cart.wav" type="audio/wav">
+        Your browser does not support the audio element.
+    </audio>
+    <audio id="remove-from-cart-sound" preload="auto">
+        <source src="sounds/remove_from_cart.mp3" type="audio/mpeg">
+        <source src="sounds/remove_from_cart.wav" type="audio/wav">
+        Your browser does not support the audio element.
+    </audio>
+    <audio id="checkout-success-sound" preload="auto">
+        <source src="sounds/checkout_success.mp3" type="audio/mpeg">
+        <source src="sounds/checkout_success.wav" type="audio/wav">
+        Your browser does not support the audio element.
+    </audio>
+    <audio id="clear-cart-sound" preload="auto">
+        <source src="sounds/clear_cart.mp3" type="audio/mpeg">
+        <source src="sounds/clear_cart.wav" type="audio/wav">
+        Your browser does not support the audio element.
+    </audio>
+
+    <!-- WhatsApp Inquiry Button -->
+    <a href="#" id="whatsapp-inquiry" class="inquiry-btn" target="_blank" title="استفسارات عبر واتساب">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <script src="script.js"></script>
+</body>
+</html>
